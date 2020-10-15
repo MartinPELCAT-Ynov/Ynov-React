@@ -71,27 +71,28 @@ export const useUndoState = () => {
   const canUndo = state.past.length > 0;
   const canRedo = state.future.length > 0;
   const set = (value: any) =>
-    setState({
-      ...state,
+    setState((newState) => ({
+      ...newState,
       present: value,
-      past: [...state.past, state.present],
-    });
+      past: [...newState.past, newState.present],
+    }));
+
   const reset = () => setState(initState);
 
   const undo = () =>
     canUndo &&
-    setState({
-      future: [...state.future, state.present],
-      present: state.past[state.past.length - 1],
-      past: [...state.past.slice(0, state.past.length - 1)],
-    });
+    setState((newState) => ({
+      future: [...newState.future, newState.present],
+      present: newState.past[newState.past.length - 1],
+      past: [...newState.past.slice(0, newState.past.length - 1)],
+    }));
   const redo = () =>
     canRedo &&
-    setState({
-      future: [...state.future.slice(0, state.future.length - 1)],
-      present: state.future[state.future.length - 1],
-      past: [...state.past, state.present],
-    });
+    setState((newState) => ({
+      future: [...newState.future.slice(0, newState.future.length - 1)],
+      present: newState.future[newState.future.length - 1],
+      past: [...newState.past, newState.present],
+    }));
 
   return { past, present, future, set, reset, undo, redo, canUndo, canRedo };
 };
